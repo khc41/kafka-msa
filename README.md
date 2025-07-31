@@ -61,8 +61,9 @@ Apache Kafka 기반 SAGA 패턴으로 구현된 E-commerce 주문 처리 시스�
 - **GitHub Actions** - CI/CD 파이프라인
 
 ### Testing & Performance
-- **JMeter/k6** - 부하 테스트
+- **k6** - 부하 테스트
 - **JUnit 5** - 단위 테스트
+- **TestContainers** - 통합 테스트
 
 ## 🚀 빠른 시작
 
@@ -171,7 +172,6 @@ sequenceDiagram
 - **Kafdrop**: Kafka 토픽별 메시지 확인
 - **애플리케이션 로그**: 각 서비스별 처리 시간 로깅
 - **MySQL Slow Query**: 데이터베이스 성능 모니터링
-- **Redis 캐싱**: 재고 정보 캐싱 성능
 
 ## 🧪 테스트
 
@@ -185,16 +185,19 @@ sequenceDiagram
 ./gradlew integrationTest
 ```
 
+### 테스트 데이터 생성
+```bash
+# 테스트 데이터 생성 (상품 1000만개, 사용자 100만개, 재고 정보)
+./gradlew bootRun --args='--spring.profiles.active=testdata'
+```
+
 ### 부하 테스트
 ```bash
-# 테스트 데이터 생성 (상품 1000개, 재고 정보)
-./scripts/generate-test-data.sh
-
-# JMeter 실행 (동시 주문 생성 시나리오)
-jmeter -n -t load-test/order-creation.jmx -l results.jtl
-
 # k6 실행 (100/500/1000 TPS 테스트)
 k6 run load-test/order-creation.js
+
+# 테스트 결과 확인
+k6 run --out json=results.json load-test/order-creation.js
 ```
 
 ## 📈 성능 목표 및 최적화
